@@ -1,0 +1,85 @@
+Source: bitcoin
+Section: utils
+Priority: optional
+Maintainer: Bloq Packaging Team <debian@bloq.com>
+Uploaders: Troy Benjegerdes <troy@bloq.com>
+Build-Depends: autotools-dev, bash-completion, dh-exec,
+ debhelper (>= 9),
+ libboost-chrono-dev,
+ libboost-system-dev,
+ libboost-filesystem-dev,
+ libboost-program-options-dev,
+ libboost-thread-dev,
+ libboost-test-dev,
+ libleveldb-dev,
+ libssl-dev,
+ pkg-config,
+ libevent-dev,
+ libzmq3-dev (>= 4) | libzmq5-dev,
+ dh-autoreconf,
+ python
+Standards-Version: 3.9.8
+Homepage: http://www.bloq.com
+Vcs-Git: https://github.com/bloq/router
+Vcs-Browser: https://github.com/bloq/router
+
+Package: bitcoind
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: peer-to-peer network based digital currency - daemon
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ Unless pruning is enabled, full global transaction history is stored
+ locally at each client, which may require large amounts of disk space.
+ .
+ This package provides the daemon, bitcoind, and the CLI tool,
+ bitcoin-cli, to interact with the daemon.
+
+Package: bitcoin-tx
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: peer-to-peer network based digital currency - transaction tool
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ Unless pruning is enabled, full global transaction history is stored
+ locally at each client, which may require large amounts of disk space.
+ .
+ This package provides bitcoin-tx, a command line tool for creating,
+ parsing, or modifying transactions.
+
+Package: libbitcoinconsensus0
+Section: libs
+Multi-Arch: same
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: bitcoin blockchain library
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ This package provides a library useful for blockchcain operations.
+
+Package: libbitcoinconsensus-dev
+Section: libdevel
+Multi-Arch: same
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libbitcoinconsensus0 (=${binary:Version})
+Description: bitcoin blockchain library development files
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ This package provides a header files and static library useful
+ for blockchcain operations.

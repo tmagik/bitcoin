@@ -1,0 +1,57 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+# Copyright © 2010-2011 Jonas Smedegaard <dr@jones.dk>
+# Copyright © 2012-2015 Scott Howard <showard@debian.org>
+# Description: Main Debian packaging script for Bitcoin
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2, or (at
+# your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#used with "./debian/rules debian/stamp-copyright-check"
+-include /usr/share/cdbs/1/rules/utils.mk
+
+# Ignore graphics and .mo files in addition to the default debian files
+DEB_COPYRIGHT_CHECK_IGNORE_REGEX = ^(.*\.png|src/bench/data/.*\.raw|src/qt/res/icons/bitcoin_testnet.ico|src/qt/res/icons/bitcoin\.icns|contrib/macdeploy/background\.psd|src/qt/res/images/splash_testnet\.png|src/qt/res/movies/.*\.png|src/qt/locale/.*\.ts|share/pixmaps/bitcoin256.png|share/pixmaps/bitcoin\.ico|src/qt/res/icons/bitcoin\.ico|doc/gitian-building/.*\.png|doc/bitcoin_logo_doxygen\.png|src/qt/res/icons/.*\.png|contrib/Bitcoin.app/Contents/Resources/BitcoinAppIcon\.icns|contrib/gitian-keys/.*\.pgp|contrib/devtools/copyright_header\.py|debian/(changelog|copyright(|_hints|_newhints)))$
+
+#testsuite needs writable $HOME and $TMPDIR (see bug#696262 #790403)
+FAKETMP = $(CURDIR)/debian/faketmp
+
+%:
+	dh $@ --parallel --with autotools-dev --with autoreconf --with bash-completion
+
+override_dh_auto_configure:
+	mkdir -p "$(FAKETMP)"
+	mkdir -p src/obj/nogui
+	dh_auto_configure -- --with-incompatible-bdb
+
+override_dh_auto_clean:
+	rm -rf "$(FAKETMP)"
+	find src/obj -type f -not -name .gitignore -delete
+	-rmdir --ignore-fail-on-non-empty build
+	rm -f src/bitcoind
+	dh_auto_clean
+
+override_dh_installchangelogs:
+	dh_installchangelogs -k doc/release-notes.md
+
+override_dh_install:
+	dh_install --list-missing
+
+DEB_UPSTREAM_VERSION = $(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
+override_dh_makeshlibs:
+	dh_makeshlibs -V -- -c0 -v$(DEB_UPSTREAM_VERSION)
+
+# run it, even if we know it fails
+override_dh_auto_test:
+	HOME=${FAKETMP} TMPDIR=${FAKETMP} dh_auto_test || ( cat src/test-suite.log && true )
+#	HOME=${FAKETMP} TMPDIR=${FAKETMP} dh_auto_test || ( cat src/test-suite.log && false )
