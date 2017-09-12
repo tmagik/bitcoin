@@ -1,56 +1,27 @@
-%define bdbv 4.8.30
+%define _hardened_build 1
 %global selinux_variants mls strict targeted
 
-%if 0%{?_no_gui:1}
-%define _buildqt 0
-%define buildargs --with-gui=no
-%else
-%define _buildqt 1
-%if 0%{?_use_qt4}
-%define buildargs --with-qrencode --with-gui=qt4
-%else
-%define buildargs --with-qrencode --with-gui=qt5
-%endif
-%endif
+Name:     bitcoin
+Version:  1.14.5
+Release:  1%{?prerelease}%{?dist}
+Summary:  Peer to Peer Cryptographic Currency
 
-Name:		bitcoin
-Version:	0.12.0
-Release:	2%{?dist}
-Summary:	Peer to Peer Cryptographic Currency
+Group:    Applications/System
+License:  MIT
+URL:      http://bitcoin.org/
+Source0:  https://github.com/btc1/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
 
-Group:		Applications/System
-License:	MIT
-URL:		https://bitcoin.org/
-Source0:	https://bitcoin.org/bin/bitcoin-core-%{version}/bitcoin-%{version}.tar.gz
-Source1:	http://download.oracle.com/berkeley-db/db-%{bdbv}.NC.tar.gz
+BuildRoot:  %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
-Source10:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/debian/examples/bitcoin.conf
+BuildRequires:  miniupnpc-devel protobuf-devel openssl-devel
+BuildRequires:  autoconf automake
+BuildRequires:  checkpolicy selinux-policy-devel selinux-policy-doc
+BuildRequires:  boost-devel libdb4-cxx-devel libevent-devel
+BuildRequires:  libtool java
 
-#man pages
-Source20:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/bitcoind.1
-Source21:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/bitcoin-cli.1
-Source22:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/doc/man/bitcoin-qt.1
+BuildRequires:  python2
 
-#selinux
-Source30:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/rpm/bitcoin.te
-# Source31 - what about bitcoin-tx and bench_bitcoin ???
-Source31:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/rpm/bitcoin.fc
-Source32:	https://raw.githubusercontent.com/bitcoin/bitcoin/v%{version}/contrib/rpm/bitcoin.if
-
-Source100:	https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg
-
-%if 0%{?_use_libressl:1}
-BuildRequires:	libressl-devel
-%else
-BuildRequires:	openssl-devel
-%endif
-BuildRequires:	boost-devel
-BuildRequires:	miniupnpc-devel
-BuildRequires:	autoconf automake libtool
-BuildRequires:	libevent-devel
-
-
-Patch0:		bitcoin-0.12.0-libressl.patch
+BuildRequires:  python3-zmq zeromq-devel
 
 
 %description
@@ -58,39 +29,35 @@ Bitcoin is a digital cryptographic currency that uses peer-to-peer technology to
 operate with no central authority or banks; managing transactions and the
 issuing of bitcoins is carried out collectively by the network.
 
-%if %{_buildqt}
-%package core
-Summary:	Peer to Peer Cryptographic Currency
-Group:		Applications/System
-Obsoletes:	%{name} < %{version}-%{release}
-Provides:	%{name} = %{version}-%{release}
-%if 0%{?_use_qt4}
-BuildRequires:	qt-devel
-%else
-BuildRequires:	qt5-qtbase-devel
-# for /usr/bin/lrelease-qt5
-BuildRequires:	qt5-linguist
-%endif
-BuildRequires:	protobuf-devel
-BuildRequires:	qrencode-devel
-BuildRequires:	%{_bindir}/desktop-file-validate
-# for icon generation from SVG
-BuildRequires:	%{_bindir}/inkscape
-BuildRequires:	%{_bindir}/convert
-
-%description core
-Bitcoin is a digital cryptographic currency that uses peer-to-peer technology to
-operate with no central authority or banks; managing transactions and the
-issuing of bitcoins is carried out collectively by the network.
-
-This package contains the Qt based graphical client and node. If you are looking
-to run a Bitcoin wallet, this is probably the package you want.
-%endif
-
 
 %package libs
-Summary:	Bitcoin shared libraries
-Group:		System Environment/Libraries
+Summary:    Peer-to-peer digital currency
+
+
+%package devel
+Summary:   Peer-to-peer digital currency
+Requires:  bitcoin-libs%{?_isa} = %{version}-%{release}
+
+
+%package utils
+Summary:    Peer-to-peer digital currency
+Obsoletes:  bitcoin-cli <= 0.9.3
+
+
+%package server
+Summary:          Peer-to-peer digital currency
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
+BuildRequires:    systemd
+Requires(pre):    shadow-utils
+Requires(post):   /usr/sbin/semodule, /sbin/restorecon, /sbin/fixfiles
+Requires(postun): /usr/sbin/semodule, /sbin/restorecon, /sbin/fixfiles
+Requires:   selinux-policy
+Requires:   policycoreutils-python
+Requires:   openssl-libs
+Requires:	  bitcoin-utils%{_isa} = %{version}
+
 
 %description libs
 This package provides the bitcoinconsensus shared libraries. These libraries
@@ -99,10 +66,6 @@ functionality.
 
 Unless you know need this package, you probably do not.
 
-%package devel
-Summary:	Development files for bitcoin
-Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 This package contains the header files and static library for the
@@ -111,17 +74,17 @@ that wants to link against that library, then you need this package installed.
 
 Most people do not need this package installed.
 
-%package server
-Summary:	The bitcoin daemon
-Group:		System Environment/Daemons
-Requires:	bitcoin-utils = %{version}-%{release}
-Requires:	selinux-policy policycoreutils-python
-Requires(pre):	shadow-utils
-Requires(post):	%{_sbindir}/semodule %{_sbindir}/restorecon %{_sbindir}/fixfiles %{_sbindir}/sestatus
-Requires(postun):	%{_sbindir}/semodule %{_sbindir}/restorecon %{_sbindir}/fixfiles %{_sbindir}/sestatus
-BuildRequires:	systemd
-BuildRequires:	checkpolicy
-BuildRequires:	%{_datadir}/selinux/devel/Makefile
+
+%description utils
+Bitcoin is an experimental new digital currency that enables instant
+payments to anyone, anywhere in the world. Bitcoin uses peer-to-peer
+technology to operate with no central authority: managing transactions
+and issuing money are carried out collectively by the network.
+
+This package provides bitcoin-cli, a utility to communicate with and
+control a Bitcoin server via its RPC protocol, and bitcoin-tx, a utility
+to create custom Bitcoin transactions.
+
 
 %description server
 This package provides a stand-alone bitcoin-core daemon. For most users, this
@@ -325,114 +288,98 @@ getent passwd bitcoin >/dev/null ||
 	-c "Bitcoin wallet server" bitcoin
 exit 0
 
+
 %post server
 %systemd_post bitcoin.service
-# SELinux
-if [ `%{_sbindir}/sestatus |grep -c "disabled"` -eq 0 ]; then
-for selinuxvariant in %{selinux_variants}; do
-	%{_sbindir}/semodule -s ${selinuxvariant} -i %{_datadir}/selinux/${selinuxvariant}/bitcoin.pp &> /dev/null || :
+for selinuxvariant in %{selinux_variants}
+do
+	/usr/sbin/semodule -s ${selinuxvariant} -i \
+		%{_datadir}/selinux/${selinuxvariant}/bitcoin.pp \
+		&> /dev/null || :
 done
-%{_sbindir}/semanage port -a -t bitcoin_port_t -p tcp 8332
-%{_sbindir}/semanage port -a -t bitcoin_port_t -p tcp 8333
-%{_sbindir}/semanage port -a -t bitcoin_port_t -p tcp 18332
-%{_sbindir}/semanage port -a -t bitcoin_port_t -p tcp 18333
-%{_sbindir}/fixfiles -R bitcoin-server restore &> /dev/null || :
-%{_sbindir}/restorecon -R %{_localstatedir}/lib/bitcoin || :
-fi
+# FIXME This is less than ideal, but until dwalsh gives me a better way...
+/usr/sbin/semanage port -a -t bitcoin_port_t -p tcp 8332
+/usr/sbin/semanage port -a -t bitcoin_port_t -p tcp 8333
+/usr/sbin/semanage port -a -t bitcoin_port_t -p tcp 18332
+/usr/sbin/semanage port -a -t bitcoin_port_t -p tcp 18333
+/sbin/fixfiles -R bitcoin-server restore &> /dev/null || :
+/sbin/restorecon -R %{_localstatedir}/lib/bitcoin || :
+
 
 %posttrans server
-%{_bindir}/systemd-tmpfiles --create
+/usr/bin/systemd-tmpfiles --create
+
 
 %preun server
 %systemd_preun bitcoin.service
 
+
 %postun server
 %systemd_postun bitcoin.service
-# SELinux
-if [ $1 -eq 0 ]; then
-	if [ `%{_sbindir}/sestatus |grep -c "disabled"` -eq 0 ]; then
-	%{_sbindir}/semanage port -d -p tcp 8332
-	%{_sbindir}/semanage port -d -p tcp 8333
-	%{_sbindir}/semanage port -d -p tcp 18332
-	%{_sbindir}/semanage port -d -p tcp 18333
-	for selinuxvariant in %{selinux_variants}; do
-		%{_sbindir}/semodule -s ${selinuxvariant} -r bitcoin &> /dev/null || :
+if [ $1 -eq 0 ] ; then
+	# FIXME This is less than ideal, but until dwalsh gives me a better way...
+	/usr/sbin/semanage port -d -p tcp 8332
+	/usr/sbin/semanage port -d -p tcp 8333
+	/usr/sbin/semanage port -d -p tcp 18332
+	/usr/sbin/semanage port -d -p tcp 18333
+	for selinuxvariant in %{selinux_variants}
+	do
+		/usr/sbin/semodule -s ${selinuxvariant} -r bitcoin \
+		&> /dev/null || :
 	done
-	%{_sbindir}/fixfiles -R bitcoin-server restore &> /dev/null || :
+	/sbin/fixfiles -R bitcoin-server restore &> /dev/null || :
 	[ -d %{_localstatedir}/lib/bitcoin ] && \
-		%{_sbindir}/restorecon -R %{_localstatedir}/lib/bitcoin &> /dev/null || :
-	fi
+		/sbin/restorecon -R %{_localstatedir}/lib/bitcoin \
+		&> /dev/null || :
 fi
 
-%clean
-rm -rf %{buildroot}
-
-%if %{_buildqt}
-%files core
-%defattr(-,root,root,-)
-%license COPYING db-%{bdbv}.NC-LICENSE
-%doc COPYING bitcoin.conf.example doc/README.md doc/bips.md doc/files.md doc/multiwallet-qt.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
-%attr(0755,root,root) %{_bindir}/bitcoin-qt
-%attr(0644,root,root) %{_datadir}/applications/bitcoin-core.desktop
-%attr(0644,root,root) %{_datadir}/kde4/services/bitcoin-core.protocol
-%attr(0644,root,root) %{_datadir}/pixmaps/*.ico
-%attr(0644,root,root) %{_datadir}/pixmaps/*.bmp
-%attr(0644,root,root) %{_datadir}/pixmaps/*.svg
-%attr(0644,root,root) %{_datadir}/pixmaps/*.png
-%attr(0644,root,root) %{_datadir}/pixmaps/*.xpm
-%attr(0644,root,root) %{_mandir}/man1/bitcoin-qt.1*
-%endif
 
 %files libs
 %defattr(-,root,root,-)
 %license COPYING
-%doc COPYING doc/README.md doc/shared-libraries.md
-%{_libdir}/lib*.so.*
+%doc doc/README.md doc/shared-libraries.md
+%{_libdir}/libbitcoinconsensus.so*
+
 
 %files devel
 %defattr(-,root,root,-)
 %license COPYING
-%doc COPYING doc/README.md doc/developer-notes.md doc/shared-libraries.md
-%attr(0644,root,root) %{_includedir}/*.h
-%{_libdir}/*.so
-%{_libdir}/*.a
-%{_libdir}/*.la
-%attr(0644,root,root) %{_libdir}/pkgconfig/*.pc
+%doc doc/README.md doc/developer-notes.md doc/shared-libraries.md
+%{_includedir}/bitcoinconsensus.h
+%{_libdir}/libbitcoinconsensus.a
+%{_libdir}/libbitcoinconsensus.la
+%{_libdir}/pkgconfig/libbitcoinconsensus.pc
 
-%files server
-%defattr(-,root,root,-)
-%license COPYING db-%{bdbv}.NC-LICENSE
-%doc COPYING bitcoin.conf.example doc/README.md doc/REST-interface.md doc/bips.md doc/dnsseed-policy.md doc/files.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
-%attr(0755,root,root) %{_sbindir}/bitcoind
-%attr(0644,root,root) %{_tmpfilesdir}/bitcoin.conf
-%attr(0644,root,root) %{_unitdir}/bitcoin.service
-%dir %attr(0750,bitcoin,bitcoin) %{_sysconfdir}/bitcoin
-%dir %attr(0750,bitcoin,bitcoin) %{_localstatedir}/lib/bitcoin
-%config(noreplace) %attr(0600,root,root) %{_sysconfdir}/sysconfig/bitcoin
-%attr(0644,root,root) %{_datadir}/selinux/*/*.pp
-%attr(0644,root,root) %{_mandir}/man1/bitcoind.1*
 
 %files utils
 %defattr(-,root,root,-)
 %license COPYING
-%doc COPYING bitcoin.conf.example doc/README.md
-%attr(0755,root,root) %{_bindir}/bitcoin-cli
-%attr(0755,root,root) %{_bindir}/bitcoin-tx
-%attr(0755,root,root) %{_bindir}/bench_bitcoin
-%attr(0644,root,root) %{_mandir}/man1/bitcoin-cli.1*
+%doc bitcoin.conf.example doc/README.md
+%{_bindir}/bitcoin-cli
+%{_bindir}/bitcoin-tx
+%{_mandir}/man1/bitcoin-cli.1*
+%{_mandir}/man1/bitcoin-tx.1*
 
+
+%files server
+%defattr(-,root,root,-)
+%license COPYING
+%doc doc/README.md doc/REST-interface.md doc/bips.md doc/dnsseed-policy.md doc/files.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md doc/zmq.md
+%dir %attr(750,bitcoin,bitcoin) %{_localstatedir}/lib/bitcoin
+%dir %attr(750,bitcoin,bitcoin) %{_sysconfdir}/bitcoin
+%config(noreplace) %attr(600,root,root) %{_sysconfdir}/sysconfig/bitcoin
+%doc SELinux/*
+%{_sbindir}/bitcoind
+%{_unitdir}/bitcoin.service
+%{_tmpfilesdir}/bitcoin.conf
+%{_mandir}/man1/bitcoind.1*
+%{_datadir}/selinux/*/bitcoin.pp
 
 
 %changelog
-* Fri Feb 26 2016 Alice Wonder <buildmaster@librelamp.com> - 0.12.0-2
-- Rename Qt package from bitcoin to bitcoin-core
-- Make building of the Qt package optional
-- When building the Qt package, default to Qt5 but allow building
--  against Qt4
-- Only run SELinux stuff in post scripts if it is not set to disabled
+* Fri Jul 21 2017 Ismael Bejarano <ismael.bejarano@coinfabrik.com> 1.14.5-1
+- Update version for btc1 1.14.5
+- Remove duplicate dependency line
 
-* Wed Feb 24 2016 Alice Wonder <buildmaster@librelamp.com> - 0.12.0-1
-- Initial spec file for 0.12.0 release
-
-# This spec file is written from scratch but a lot of the packaging decisions are directly
-# based upon the 0.11.2 package spec file from https://www.ringingliberty.com/bitcoin/
+* Mon Jul 10 2017 Ismael Bejarano <ismael.bejarano@coinfabrik.com> 1.14.3-1
+- Packages for btc1 1.14.3 based on packages from https://www.ringingliberty.com/bitcoin/

@@ -70,12 +70,13 @@ BlockAssembler::Options::Options() {
 BlockAssembler::BlockAssembler(const CChainParams& params, const Options& options) : chainparams(params)
 {
     blockMinFeeRate = options.blockMinFeeRate;
+
     // Limit weight to between 4K and MAX_BLOCK_WEIGHT-4K for sanity:
-    nBlockMaxWeight = std::max<size_t>(4000, std::min<size_t>(MAX_BLOCK_WEIGHT - 4000, options.nBlockMaxWeight));
+    nBlockMaxWeight = std::max<size_t>(4000, std::min<size_t>(MaxBlockWeight(fWitnessSeasoned) - 4000, options.nBlockMaxWeight));
     // Limit size to between 1K and MAX_BLOCK_SERIALIZED_SIZE-1K for sanity:
-    nBlockMaxSize = std::max<size_t>(1000, std::min<size_t>(MAX_BLOCK_SERIALIZED_SIZE - 1000, options.nBlockMaxSize));
+    nBlockMaxSize = std::max<size_t>(1000, std::min<size_t>(MaxBlockSerSize(fWitnessSeasoned) - 1000, options.nBlockMaxSize));
     // Whether we need to account for byte usage (in addition to weight usage)
-    fNeedSizeAccounting = (nBlockMaxSize < MAX_BLOCK_SERIALIZED_SIZE - 1000);
+    fNeedSizeAccounting = (nBlockMaxSize < MaxBlockSerSize(fWitnessSeasoned) - 1000);
 }
 
 static BlockAssembler::Options DefaultOptions(const CChainParams& params)
@@ -90,7 +91,8 @@ static BlockAssembler::Options DefaultOptions(const CChainParams& params)
     bool fWeightSet = false;
     if (gArgs.IsArgSet("-blockmaxweight")) {
         options.nBlockMaxWeight = gArgs.GetArg("-blockmaxweight", DEFAULT_BLOCK_MAX_WEIGHT);
-        options.nBlockMaxSize = MAX_BLOCK_SERIALIZED_SIZE;
+#warning "skipping nMaxBlockSize"
+        //options.nBlockMaxSize = MaxBlockSerSize(fWitnessSeasoned);
         fWeightSet = true;
     }
     if (gArgs.IsArgSet("-blockmaxsize")) {
@@ -120,6 +122,7 @@ void BlockAssembler::resetBlock()
     nBlockWeight = 4000;
     nBlockSigOpsCost = 400;
     fIncludeWitness = false;
+    fWitnessSeasoned = false;
 
     // These counters do not include coinbase tx
     nBlockTx = 0;
@@ -167,6 +170,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     // TODO: replace this with a call to main to assess validity of a mempool
     // transaction (which in most cases can be a no-op).
     fIncludeWitness = IsWitnessEnabled(pindexPrev, chainparams.GetConsensus()) && fMineWitnessTx;
+    fWitnessSeasoned = IsWitnessSeasoned(pindexPrev, chainparams.GetConsensus());
 
     int nPackagesSelected = 0;
     int nDescendantsUpdated = 0;
@@ -229,7 +233,7 @@ bool BlockAssembler::TestPackage(uint64_t packageSize, int64_t packageSigOpsCost
     // TODO: switch to weight-based accounting for packages instead of vsize-based accounting.
     if (nBlockWeight + WITNESS_SCALE_FACTOR * packageSize >= nBlockMaxWeight)
         return false;
-    if (nBlockSigOpsCost + packageSigOpsCost >= MAX_BLOCK_SIGOPS_COST)
+    if (nBlockSigOpsCost + packageSigOpsCost >= (uint64_t)MaxBlockSigOpsCost(fWitnessSeasoned))
         return false;
     return true;
 }

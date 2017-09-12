@@ -1,4 +1,4 @@
-Bitcoin Core
+btc1 Core
 =============
 
 Setup
