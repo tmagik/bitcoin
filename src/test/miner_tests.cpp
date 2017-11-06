@@ -124,6 +124,7 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     BOOST_CHECK(pblocktemplate = CreateNewBlock(chainparams, scriptPubKey));
     delete pblocktemplate;
 
+    /* this test should pass with Segwit2X larger block acceptance */
     // block sigops > limit: 1000 CHECKMULTISIG + 1
     tx.vin.resize(1);
     // NOTE: OP_NOP is used to force 20 SigOps for the CHECKMULTISIG
@@ -133,6 +134,47 @@ BOOST_AUTO_TEST_CASE(CreateNewBlock_validity)
     tx.vout.resize(1);
     tx.vout[0].nValue = 5000000000LL;
     for (unsigned int i = 0; i < 1001; ++i)
+    {
+        tx.vout[0].nValue -= 1000000;
+        hash = tx.GetHash();
+        bool spendsCoinbase = (i == 0) ? true : false; // only first tx spends coinbase
+        // If we don't set the # of sig ops in the CTxMemPoolEntry, template creation fails
+        mempool.addUnchecked(hash, entry.Fee(1000000).Time(GetTime()).SpendsCoinbase(spendsCoinbase).FromTx(tx));
+        tx.vin[0].prevout.hash = hash;
+    }
+    BOOST_CHECK(CreateNewBlock(chainparams, scriptPubKey));
+    mempool.clear();
+
+    // block sigops > limit: 1000 CHECKMULTISIG + 1
+    tx.vin.resize(1);
+    // NOTE: OP_NOP is used to force 20 SigOps for the CHECKMULTISIG
+    tx.vin[0].scriptSig = CScript() << OP_0 << OP_0 << OP_0 << OP_NOP << OP_CHECKMULTISIG << OP_1;
+    tx.vin[0].prevout.hash = txFirst[0]->GetHash();
+    tx.vin[0].prevout.n = 0;
+    tx.vout.resize(1);
+    tx.vout[0].nValue = 5000000000LL;
+    for (unsigned int i = 0; i < 1999; ++i)
+    {
+        tx.vout[0].nValue -= 1000000;
+        hash = tx.GetHash();
+        bool spendsCoinbase = (i == 0) ? true : false; // only first tx spends coinbase
+        // If we don't set the # of sig ops in the CTxMemPoolEntry, template creation fails
+        mempool.addUnchecked(hash, entry.Fee(1000000).Time(GetTime()).SpendsCoinbase(spendsCoinbase).FromTx(tx));
+        tx.vin[0].prevout.hash = hash;
+    }
+    BOOST_CHECK(CreateNewBlock(chainparams, scriptPubKey));
+    mempool.clear();
+
+    /* This one should fail, but why 2000, not 2001? */
+    // block sigops > limit: 1000 CHECKMULTISIG + 1
+    tx.vin.resize(1);
+    // NOTE: OP_NOP is used to force 20 SigOps for the CHECKMULTISIG
+    tx.vin[0].scriptSig = CScript() << OP_0 << OP_0 << OP_0 << OP_NOP << OP_CHECKMULTISIG << OP_1;
+    tx.vin[0].prevout.hash = txFirst[0]->GetHash();
+    tx.vin[0].prevout.n = 0;
+    tx.vout.resize(1);
+    tx.vout[0].nValue = 5000000000LL;
+    for (unsigned int i = 0; i < 2000; ++i)
     {
         tx.vout[0].nValue -= 1000000;
         hash = tx.GetHash();

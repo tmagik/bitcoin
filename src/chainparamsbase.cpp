@@ -11,13 +11,15 @@
 #include <assert.h>
 
 const std::string CBaseChainParams::MAIN = "main";
+const std::string CBaseChainParams::TESTNET3 = "test3";
 const std::string CBaseChainParams::TESTNET = "test";
 const std::string CBaseChainParams::REGTEST = "regtest";
 
 void AppendParamsHelpMessages(std::string& strUsage, bool debugHelp)
 {
     strUsage += HelpMessageGroup(_("Chain selection options:"));
-    strUsage += HelpMessageOpt("-testnet", _("Use the test chain"));
+    strUsage += HelpMessageOpt("-testnet3", _("Use the testnet3 (bitcoin-core) chain"));
+    strUsage += HelpMessageOpt("-testnet", _("Use the testnet5 (segwit2x) chain"));
     if (debugHelp) {
         strUsage += HelpMessageOpt("-regtest", "Enter regression test mode, which uses a special chain in which blocks can be solved instantly. "
                                    "This is intended for regression testing tools and app development.");
@@ -40,13 +42,27 @@ static CBaseMainParams mainParams;
 /**
  * Testnet (v3)
  */
+class CBaseTestNet3Params : public CBaseChainParams
+{
+public:
+    CBaseTestNet3Params()
+    {
+        nRPCPort = 18332;
+        strDataDir = "testnet3";
+    }
+};
+static CBaseTestNet3Params testNet3Params;
+
+/**
+ * Testnet (v5)
+ */
 class CBaseTestNetParams : public CBaseChainParams
 {
 public:
     CBaseTestNetParams()
     {
-        nRPCPort = 18332;
-        strDataDir = "testnet3";
+        nRPCPort = 18554;
+        strDataDir = "testnet5";
     }
 };
 static CBaseTestNetParams testNetParams;
@@ -79,6 +95,8 @@ CBaseChainParams& BaseParams(const std::string& chain)
         return mainParams;
     else if (chain == CBaseChainParams::TESTNET)
         return testNetParams;
+    else if (chain == CBaseChainParams::TESTNET3)
+        return testNet3Params;
     else if (chain == CBaseChainParams::REGTEST)
         return regTestParams;
     else
@@ -93,12 +111,19 @@ void SelectBaseParams(const std::string& chain)
 std::string ChainNameFromCommandLine()
 {
     bool fRegTest = GetBoolArg("-regtest", false);
-    bool fTestNet = GetBoolArg("-testnet", false);
+    bool fTestNet3 = GetBoolArg("-testnet3", false);
+    bool fTestNet = GetBoolArg("-testnet5", false) || GetBoolArg("-testnet", false);
 
     if (fTestNet && fRegTest)
         throw std::runtime_error("Invalid combination of -regtest and -testnet.");
+    if (fTestNet && fTestNet3)
+        throw std::runtime_error("Invalid combination of -testnet and -testnet3.");
+    if (fTestNet3 && fRegTest)
+        throw std::runtime_error("Invalid combination of -regtest and -testnet3.");
     if (fRegTest)
         return CBaseChainParams::REGTEST;
+    if (fTestNet3)
+        return CBaseChainParams::TESTNET3;
     if (fTestNet)
         return CBaseChainParams::TESTNET;
     return CBaseChainParams::MAIN;
