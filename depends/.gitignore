@@ -3,6 +3,8 @@ work/
 built/
 sources/
 config.site
+config.guess
+config.sub
 x86_64*
 i686*
 mips*
