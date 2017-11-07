@@ -1,0 +1,53 @@
+#!/usr/bin/make -f
+# -*- mode: makefile; coding: utf-8 -*-
+# Copyright © 2010-2012, 2017 Jonas Smedegaard <dr@jones.dk>
+# Copyright © 2012-2015 Scott Howard <showard@debian.org>
+# Description: Main Debian packaging script for Bitcoin
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#testsuite needs writable $HOME and $TMPDIR (see bug#696262 #790403)
+FAKETMP = $(CURDIR)/debian/faketmp
+
+
+%:
+	dh $@ --parallel --with autotools-dev --with autoreconf --with bash-completion
+
+override_dh_auto_configure:
+	mkdir -p "$(FAKETMP)"
+	mkdir -p src/obj/nogui
+	dh_auto_configure -- --disable-wallet --with-gui=no --without-miniupnpc
+
+override_dh_auto_clean:
+	rm -rf "$(FAKETMP)"
+	-rmdir --ignore-fail-on-non-empty build
+	rm -f src/bitcoind
+	find -name "libbitcoin*.a" | xargs rm -f
+	find src/test/ -name "*.pyc" | xargs rm -f
+	dh_auto_clean
+
+override_dh_installchangelogs:
+	dh_installchangelogs -k doc/release-notes.md
+
+override_dh_install:
+	dh_install --list-missing
+
+override_dh_makeshlibs:
+	dh_makeshlibs -V -- -c0 -v$(firstword $(subst -, ,$(shell dpkg-parsechangelog -S Version)))
+
+override_dh_auto_test:
+	HOME=${FAKETMP} TMPDIR=${FAKETMP} dh_auto_test || ( cat src/test-suite.log && false )
+
+get-orig-source:
+	uscan --download-current-version

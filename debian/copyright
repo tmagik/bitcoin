@@ -1,0 +1,398 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Bitcoin
+Upstream-Contact: https://github.com/bitcoin/bitcoin/issues
+ irc: #bitcoin@freenode.net
+Source: https://github.com/bitcoin/bitcoin
+
+Files: *
+Copyright: 2009-2016, The Bitcoin Core developers
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+Comment:
+ Contact information for individual Bitcoin Core Developers is listed on
+ <https://bitcoincore.org/en/team/>.
+
+Files:
+ src/crypto/ctaes/*
+ src/secp256k1/src/*
+Copyright:
+  2013-2014, Diederik Huys
+  2013-2015, Cory Fields
+  2013-2015, Thomas Daede
+  2013-2016, Pieter Wuille
+  2015, Andrew Poelstra
+  2015, Gregory Maxwell
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files:
+ src/test/bctest.py
+ src/test/bitcoin-util-test.py
+ src/test/univalue_tests.cpp
+ src/univalue/*
+Copyright:
+  2014, BitPay Inc
+  2014-2015, The Bitcoin Core developers
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files: src/leveldb/*
+Copyright: 2011-2014, The LevelDB Authors
+License-Grant:
+ Use of this source code is governed by a BSD-style license that can be
+ found in the LICENSE file.
+License: BSD-3-clause
+
+Files: contrib/devtools/clang-format.py
+Copyright:
+  2015, MarcoFalke
+  2015, The Bitcoin Core developers
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files: contrib/macdeploy/macdeployqtplus
+Copyright: 2011, Patrick "p2k" Schneider <me@p2k-network.org>
+License-Grant:
+ This program is free software: you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or (at your
+ option) any later version.
+License: GPL-3+
+
+Files:
+ contrib/debian/manpages/bitcoin.conf.5
+ contrib/debian/manpages/bitcoind.1
+Copyright: Micah Anderson <micah@debian.org>
+License-Grant:
+ Permission is granted to copy, distribute and/or modify this document
+ under the terms of the GNU General Public License, Version 3 or any
+ later version published by the Free Software Foundation.
+License: GPL-3+
+
+Files:
+ build-aux/m4/ax_check_compile_flag.m4
+ build-aux/m4/ax_check_link_flag.m4
+ build-aux/m4/ax_check_preproc_flag.m4
+ build-aux/m4/ax_pthread.m4
+Copyright:
+  2008, Guido U. Draheim <guidod@gmx.de>
+  2008, Steven G. Johnson <stevenj@alum.mit.edu>
+  2011, Daniel Richard G. <skunk@iSKUNK.ORG>
+  2011, Maarten Bosmans <mkbosmans@gmail.com>
+License-Grant:
+ This program is free software: you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation, either version 3 of the License, or (at your
+ option) any later version.
+License: GPL-3+ with Autoconf exception
+ As a special exception, the respective Autoconf Macro's copyright owner
+ gives unlimited permission to copy, distribute and modify the configure
+ scripts that are the output of Autoconf when processing the Macro. You
+ need not follow the terms of the GNU General Public License when using
+ or distributing such scripts, even though portions of the text of the
+ Macro appear in them. The GNU General Public License (GPL) does govern
+ all other use of the material that constitutes the Autoconf Macro.
+ .
+ This special exception to the GPL applies to versions of the Autoconf
+ Macro released by the Autoconf Archive. When you make and distribute a
+ modified version of the Autoconf Macro, you may extend this special
+ exception to the GPL to apply to your modified version as well.
+
+Files:
+ contrib/devtools/symbol-check.py
+ contrib/devtools/update-translations.py
+ contrib/seeds/generate-seeds.py
+ src/univalue/lib/univalue_utffilter.h
+Copyright: 2014,2016, Wladimir J. van der Laan
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files:
+ build-aux/m4/ax_boost_*
+ build-aux/m4/ax_cxx_compile_stdcxx.m4
+ build-aux/m4/ax_gcc_func_attribute.m4
+ src/secp256k1/build-aux/m4/ax_prog_cc_for_build.m4
+Copyright:
+  2008, Benjamin Kosnik <bkoz@redhat.com>
+  2008, Daniel Casimiro <dan.casimiro@gmail.com>
+  2008, Paolo Bonzini
+  2008-2009, Michael Tindal
+  2008-2009, Thomas Porschberg <thomas@randspringer.de>
+  2009, Peter Adolphs
+  2009, Roman Rybalko <libtorrent@romanr.info>
+  2012, Xiyue Deng <manphiz@gmail.com>
+  2012, Zack Weinberg <zackw@panix.com>
+  2013, Gabriele Svelto <gabriele.svelto@gmail.com>
+  2013, Roy Stogner <roystgnr@ices.utexas.edu>
+  2014-2015, Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+  2015, Moritz Klammler <moritz@klammler.eu>
+  2015, Paul Norman <penorman@mac.com>
+License: FSFAP
+
+Files: src/tinyformat.h
+Copyright: 2011, Chris Foster <chris42f@gmail.com>
+License: BSL-1
+
+Files: qa/rpc-tests/test_framework/authproxy.py
+Copyright:
+  2007, Jan-Klaas Kollhof
+  2011, Jeff Garzik <jgarzik@exmulti.com>
+License-Grant:
+ jsonrpc is free software; you can redistribute it and/or modify it
+ under the terms of the GNU Lesser General Public License as published
+ by the Free Software Foundation; either version 2.1 of the License, or
+ (at your option) any later version.
+License: LGPL-2.1+
+
+Files: qa/rpc-tests/test_framework/mininode.py
+Copyright:
+  2010, ArtForz
+  2010-2016, The Bitcoin Core developers
+  2011, Jeff Garzik <jgarzik@exmulti.com>
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files: contrib/devtools/git-subtree-check.sh
+Copyright:
+  2009, Avery Pennarun <apenwarr@gmail.com>
+  2015, The Bitcoin Core developers
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files: contrib/devtools/clang-format-diff.py
+Copyright: 2007-2015, University of Illinois at Urbana-Champaign
+License: BSD-3-clause~Illinois
+
+Files:
+ src/addrman.cpp
+ src/addrman.h
+Copyright:
+  2012-2013, Pieter Wuille
+  2012-2015, The Bitcoin Core developers
+License-Grant:
+ Distributed under the MIT software license, see the accompanying file
+ COPYING or http://www.opensource.org/licenses/mit-license.php.
+License: Expat
+
+Files:
+ src/qt/res/icons/add.png
+ src/qt/res/icons/address-book.png
+ src/qt/res/icons/chevron.png
+ src/qt/res/icons/configure.png
+ src/qt/res/icons/debugwindow.png
+ src/qt/res/icons/edit.png
+ src/qt/res/icons/editcopy.png
+ src/qt/res/icons/editpaste.png
+ src/qt/res/icons/export.png
+ src/qt/res/icons/eye.png
+ src/qt/res/icons/filesave.png
+ src/qt/res/icons/history.png
+ src/qt/res/icons/info.png
+ src/qt/res/icons/key.png
+ src/qt/res/icons/lock_*.png
+ src/qt/res/icons/open.png
+ src/qt/res/icons/overview.png
+ src/qt/res/icons/quit.png
+ src/qt/res/icons/receive.png
+ src/qt/res/icons/remove.png
+ src/qt/res/icons/send.png
+ src/qt/res/icons/synced.png
+ src/qt/res/icons/transaction*.png
+ src/qt/res/icons/tx_output.png
+ src/qt/res/icons/warning.png
+Copyright: Stephen Hutchings (and more) <http://typicons.com/>
+License: Expat
+Comment:
+ Source file contrib/debian/copyright assumed authoritative info, based
+ on endorsement in source file doc/assets-attribution.md.
+
+Files:
+ src/qt/res/icons/connect*.png
+ src/qt/res/src/connect-*.svg
+Copyright: Marco Falke
+License: Expat
+Comment:
+ Source file contrib/debian/copyright assumed authoritative info, based
+ on endorsement in source file doc/assets-attribution.md.
+
+Files:
+ src/qt/res/icons/fontbigger.png
+ src/qt/res/icons/fontsmaller.png
+ src/qt/res/icons/tx_mined.png
+ src/qt/res/src/mine.svg
+Copyright: Jonas Schnelli
+License: Expat
+Comment:
+ Source file contrib/debian/copyright assumed authoritative info, based
+ on endorsement in source file doc/assets-attribution.md.
+
+Files:
+ src/qt/res/icons/clock*.png
+ src/qt/res/icons/eye_*.png
+ src/qt/res/icons/tx_in*.png
+ src/qt/res/icons/verify.png
+ src/qt/res/src/clock_*.svg
+ src/qt/res/src/tx_*.svg
+ src/qt/res/src/verify.svg
+Copyright:
+  Jonas Schnelli
+  Stephan Hutching
+License: Expat
+Comment:
+ Source file contrib/debian/copyright assumed authoritative info, based
+ on endorsement in source file doc/assets-attribution.md.
+
+Files:
+ share/pixmaps/bitcoin*
+ src/qt/res/icons/about.png
+ src/qt/res/icons/bitcoin.*
+ src/qt/res/src/bitcoin.svg
+Copyright: None (in the public domain)
+License: public-domain
+Comment:
+ Source file contrib/debian/copyright assumed authoritative info, based
+ on endorsement in source file doc/assets-attribution.md.
+ .
+ Referenced web page <https://bitcointalk.org/?topic=1756.0> contains
+ the statement "This work is in the Public Domain" with "Public Domain"
+ linking to <https://creativecommons.org/licenses/publicdomain/>.
+ .
+ Copyright hint of "Bitboy, Jonas Schnelli" assumed to instead indicate
+ authorship (since public domain implies _no_ copyright holder).
+
+Files: debian/*
+Copyright:
+  2010-2012,2016-2017, Jonas Smedegaard <dr@jones.dk>
+  2012-2015, Scott Howard <showard@debian.org>
+License-Grant:
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the
+ Free Software Foundation; either version 3, or (at your option) any
+ later version.
+License: GPL-3+
+
+License: Expat
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included
+ in all copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+License: BSD-3-clause
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are
+ met:
+ .
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of Google Inc. nor the names of its contributors
+    may be used to endorse or promote products derived from this
+    software without specific prior written permission.
+ .
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+License: BSD-3-clause~Illinois
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the
+ "Software"), to deal with the Software without restriction, including
+ without limitation the rights to use, copy, modify, merge, publish,
+ distribute, sublicense, and/or sell copies of the Software, and to
+ permit persons to whom the Software is furnished to do so, subject to
+ the following conditions:
+ .
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimers.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimers in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the names of the LLVM Team, University of Illinois at
+    Urbana-Champaign, nor the names of its contributors may be used to
+    endorse or promote products derived from this Software without
+    specific prior written permission.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+ THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
+
+License: BSL-1
+  Boost Software License - Version 1.0
+ .
+ Permission is hereby granted, free of charge, to any person or
+ organization obtaining a copy of the software and accompanying
+ documentation covered by this license (the "Software") to use,
+ reproduce, display, distribute, execute, and transmit the Software, and
+ to prepare derivative works of the Software, and to permit
+ third-parties to whom the Software is furnished to do so, all subject
+ to the following:
+ .
+ The copyright notices in the Software and this entire statement,
+ including the above license grant, this restriction and the following
+ disclaimer, must be included in all copies of the Software, in whole or
+ in part, and all derivative works of the Software, unless such copies
+ or derivative works are solely in the form of machine-executable object
+ code generated by a source language processor.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND
+ NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR ANYONE
+ DISTRIBUTING THE SOFTWARE BE LIABLE FOR ANY DAMAGES OR OTHER LIABILITY,
+ WHETHER IN CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+License: FSFAP
+ Copying and distribution of this file, with or without modification,
+ are permitted in any medium without royalty provided the copyright
+ notice and this notice are preserved. This file is offered as-is,
+ without any warranty.
+
+License: LGPL-2.1+
+License-Reference: /usr/share/common-licenses/LGPL-2.1
+
+License: GPL-3+
+License-Reference: /usr/share/common-licenses/GPL-3
