@@ -1,4 +1,4 @@
-Source: bitcoin-bitcoincore
+Source: bitcoin
 Section: utils
 Priority: optional
 Maintainer: Bloq Debian Packaging Team <debian@bloq.com>
@@ -26,7 +26,56 @@ Homepage: http://github.com/bloq/bitcoin
 Vcs-Git: https://github.com/bloq/bitcoin
 Vcs-Browser: https://github.com/bloq/bitcoin
 
-Package: bitcoind-bitcoincore
+Package: bitcoin-doc
+Architecture: any
+Description: peer-to-peer network based digital currency - transaction tool
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+
+Package: bitcoind
+Provides: bitcoind, bloq-router
+Replaces: bitcoind
+Conflicts: bitcoind
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends}
+Description: peer-to-peer network based digital currency - daemon
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ Unless pruning is enabled, full global transaction history is stored
+ locally at each client, which may require large amounts of disk space.
+ .
+ This package provides the daemon, bitcoind, and the CLI tool,
+ bitcoin-cli, to interact with the daemon.
+
+Package: bitcoin-tx
+Provides: bitcoin-tx
+Architecture: any
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends}
+Description: peer-to-peer network based digital currency - transaction tool
+ Bitcoin is a free open source peer-to-peer electronic cash system that
+ is completely decentralized, without the need for a central server or
+ trusted parties.  Users hold the crypto keys to their own money and
+ transact directly with each other, with the help of a P2P network to
+ check for double-spending.
+ .
+ Unless pruning is enabled, full global transaction history is stored
+ locally at each client, which may require large amounts of disk space.
+ .
+ This package provides bitcoin-tx, a command line tool for creating,
+ parsing, or modifying transactions.
+
+Package: bitcoind-wallet
 Provides: bitcoind
 Replaces: bitcoind
 Conflicts: bitcoind
@@ -47,10 +96,9 @@ Description: peer-to-peer network based digital currency - daemon
  This package provides the daemon, bitcoind, and the CLI tool,
  bitcoin-cli, to interact with the daemon.
  .
- This package includes the Bitcore indexing patches needed by the 
- Bitcore-node wrapper for the Bitcore Insight API
+ This package is built with the integrated wallet code enabled
 
-Package: bitcoin-tx-bitcoincore
+Package: bitcoin-tx-wallet
 Provides: bitcoin-tx
 Architecture: any
 Depends:
@@ -68,3 +116,5 @@ Description: peer-to-peer network based digital currency - transaction tool
  .
  This package provides bitcoin-tx, a command line tool for creating,
  parsing, or modifying transactions.
+ .
+ This package is built with the integrated wallet code enabled

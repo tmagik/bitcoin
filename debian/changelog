@@ -1,3 +1,10 @@
+bitcoin (0.15.99.1) BETA; urgency=medium
+
+  * Generate binary packages with and without wallets
+  * Use BDB 5.3 search path
+
+ -- Troy Benjegerdes <troy@bloq.com>  Tue, 16 Jan 2018 15:21:47 -0600
+
 bitcoin-bitcoincore (0.15.99.0) UNRELEASED; urgency=medium
 
   * Debian packaging from git repo

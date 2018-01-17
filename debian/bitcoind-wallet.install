@@ -1,0 +1,2 @@
+wallet/src/bitcoin-cli usr/bin
+wallet/src/bitcoind usr/bin
