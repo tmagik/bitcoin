@@ -401,11 +401,13 @@ static UniValue JSONRPCExecOne(const UniValue& req)
     catch (const UniValue& objError)
     {
         rpc_result = JSONRPCReplyObj(NullUniValue, objError, jreq.id);
+        LogPrint(BCLog::RPCERR, "RPCError: %s\n", rpc_result);
     }
     catch (const std::exception& e)
     {
         rpc_result = JSONRPCReplyObj(NullUniValue,
                                      JSONRPCError(RPC_PARSE_ERROR, e.what()), jreq.id);
+        LogPrint(BCLog::RPCERR, "RPCError: %s\n", rpc_result);
     }
 
     return rpc_result;
