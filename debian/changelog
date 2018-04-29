@@ -1,3 +1,9 @@
+bitcoin (0.16.dev1) BETA; urgency=medium
+
+  * 0.16/master branch with parallel txindex patch
+
+ -- Troy Benjegerdes <troy@bloq.com>  Sun, 29 Apr 2018 18:58:40 -0500
+
 bitcoin (0.15.99.1) BETA; urgency=medium
 
   * Generate binary packages with and without wallets
