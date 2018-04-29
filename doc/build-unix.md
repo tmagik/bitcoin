@@ -2,7 +2,8 @@ UNIX BUILD NOTES
 ====================
 Some notes on how to build Bitcoin Core in Unix.
 
-(for OpenBSD specific instructions, see [build-openbsd.md](build-openbsd.md))
+(For BSD specific instructions, see [build-openbsd.md](build-openbsd.md) and/or
+[build-netbsd.md](build-netbsd.md))
 
 Note
 ---------------------
@@ -61,8 +62,13 @@ tuned to conserve memory with additional CXXFLAGS:
 
     ./configure CXXFLAGS="--param ggc-min-expand=1 --param ggc-min-heapsize=32768"
 
-Dependency Build Instructions: Ubuntu & Debian
-----------------------------------------------
+
+## Linux Distribution Specific Instructions
+
+### Ubuntu & Debian
+
+#### Dependency Build Instructions
+
 Build requirements:
 
     sudo apt-get install build-essential libtool autotools-dev automake pkg-config libssl-dev libevent-dev bsdmainutils python3
@@ -104,8 +110,7 @@ ZMQ dependencies (provides ZMQ API 4.x):
 
     sudo apt-get install libzmq3-dev
 
-Dependencies for the GUI: Ubuntu & Debian
------------------------------------------
+#### Dependencies for the GUI
 
 If you want to build Bitcoin-Qt, make sure that the required packages for Qt development
 are installed. Either Qt 5 or Qt 4 are necessary to build the GUI.
@@ -127,8 +132,11 @@ libqrencode (optional) can be installed with:
 Once these are installed, they will be found by configure and a bitcoin-qt executable will be
 built by default.
 
-Dependency Build Instructions: Fedora
--------------------------------------
+
+### Fedora
+
+#### Dependency Build Instructions
+
 Build requirements:
 
     sudo dnf install gcc-c++ libtool make autoconf automake openssl-devel libevent-devel boost-devel libdb4-devel libdb4-cxx-devel python3
@@ -166,7 +174,7 @@ turned off by default.  See the configure options for upnp behavior desired:
 Berkeley DB
 -----------
 It is recommended to use Berkeley DB 4.8. If you have to build it yourself,
-you can use [the installation script included in contrib/](contrib/install_db4.sh)
+you can use [the installation script included in contrib/](/contrib/install_db4.sh)
 like so
 
 ```shell
@@ -312,17 +320,14 @@ You need to use GNU make (`gmake`) instead of `make`.
 
 For the wallet (optional):
 
-    pkg install db5
-
-This will give a warning "configure: WARNING: Found Berkeley DB other
-than 4.8; wallets opened by this build will not be portable!", but as FreeBSD never
-had a binary release, this may not matter. If backwards compatibility
-with 4.8-built Bitcoin Core is needed follow the steps under "Berkeley DB" above.
+    ./contrib/install_db4.sh `pwd`
+    setenv BDB_PREFIX $PWD/db4
 
 Then build using:
 
     ./autogen.sh
-    ./configure --with-incompatible-bdb BDB_CFLAGS="-I/usr/local/include/db5" BDB_LIBS="-L/usr/local/lib -ldb_cxx-5"
+    ./configure --disable-wallet # OR
+    ./configure BDB_CFLAGS="-I${BDB_PREFIX}/include" BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx"
     gmake
 
 *Note on debugging*: The version of `gdb` installed by default is [ancient and considered harmful](https://wiki.freebsd.org/GdbRetirement).

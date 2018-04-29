@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2016 The Bitcoin Core developers
+// Copyright (c) 2009-2017 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -11,9 +11,11 @@
 #include <sync.h>
 #include <txmempool.h>
 #include <util.h>
+#include <validation.h>
 
 #include <list>
 #include <atomic>
+#include <future>
 
 #include <boost/signals2/signal.hpp>
 
@@ -52,6 +54,11 @@ void CMainSignals::FlushBackgroundCallbacks() {
     if (m_internals) {
         m_internals->m_schedulerClient.EmptyQueue();
     }
+}
+
+size_t CMainSignals::CallbacksPending() {
+    if (!m_internals) return 0;
+    return m_internals->m_schedulerClient.CallbacksPending();
 }
 
 void CMainSignals::RegisterWithMempoolSignals(CTxMemPool& pool) {
@@ -113,6 +120,16 @@ void CallFunctionInValidationInterfaceQueue(std::function<void ()> func) {
     g_signals.m_internals->m_schedulerClient.AddToProcessQueue(std::move(func));
 }
 
+void SyncWithValidationInterfaceQueue() {
+    AssertLockNotHeld(cs_main);
+    // Block until the validation queue drains
+    std::promise<void> promise;
+    CallFunctionInValidationInterfaceQueue([&promise] {
+        promise.set_value();
+    });
+    promise.get_future().wait();
+}
+
 void CMainSignals::MempoolEntryRemoved(CTransactionRef ptx, MemPoolRemovalReason reason) {
     if (reason != MemPoolRemovalReason::BLOCK && reason != MemPoolRemovalReason::CONFLICT) {
         m_internals->m_schedulerClient.AddToProcessQueue([ptx, this] {
@@ -122,6 +139,10 @@ void CMainSignals::MempoolEntryRemoved(CTransactionRef ptx, MemPoolRemovalReason
 }
 
 void CMainSignals::UpdatedBlockTip(const CBlockIndex *pindexNew, const CBlockIndex *pindexFork, bool fInitialDownload) {
+    // Dependencies exist that require UpdatedBlockTip events to be delivered in the order in which
+    // the chain actually updates. One way to ensure this is for the caller to invoke this signal
+    // in the same critical section where the chain is updated
+
     m_internals->m_schedulerClient.AddToProcessQueue([pindexNew, pindexFork, fInitialDownload, this] {
         m_internals->UpdatedBlockTip(pindexNew, pindexFork, fInitialDownload);
     });

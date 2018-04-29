@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2016 The Bitcoin Core developers
+// Copyright (c) 2009-2017 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -42,9 +42,24 @@ void UnregisterAllValidationInterfaces();
  * will result in a deadlock (that DEBUG_LOCKORDER will miss).
  */
 void CallFunctionInValidationInterfaceQueue(std::function<void ()> func);
+/**
+ * This is a synonym for the following, which asserts certain locks are not
+ * held:
+ *     std::promise<void> promise;
+ *     CallFunctionInValidationInterfaceQueue([&promise] {
+ *         promise.set_value();
+ *     });
+ *     promise.get_future().wait();
+ */
+void SyncWithValidationInterfaceQueue();
 
 class CValidationInterface {
 protected:
+    /**
+     * Protected destructor so that instances can only be deleted by derived classes.
+     * If that restriction is no longer desired, this should be made public and virtual.
+     */
+    ~CValidationInterface() = default;
     /**
      * Notifies listeners of updated block chain tip
      *
@@ -130,6 +145,8 @@ public:
     void UnregisterBackgroundSignalScheduler();
     /** Call any remaining callbacks on the calling thread */
     void FlushBackgroundCallbacks();
+
+    size_t CallbacksPending();
 
     /** Register with mempool to call TransactionRemovedFromMempool callbacks */
     void RegisterWithMempoolSignals(CTxMemPool& pool);
