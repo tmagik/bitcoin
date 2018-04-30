@@ -16,11 +16,13 @@ Build-Depends:
  libboost-system-dev,
  libboost-test-dev,
  libboost-thread-dev,
+ libdb5.3++-dev,
  libevent-dev,
  libssl-dev,
  libzmq3-dev,
  pkg-config,
  python,
+ python-configparser,
 Standards-Version: 4.0.0
 Homepage: http://github.com/bloq/bitcoin
 Vcs-Git: https://github.com/bloq/bitcoin

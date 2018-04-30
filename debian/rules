@@ -35,11 +35,8 @@ override_dh_build:
 
 override_dh_auto_clean:
 	rm -rf "$(FAKETMP)"
-	-rmdir --ignore-fail-on-non-empty build
-	rm -f src/bitcoind
-	find -name "libbitcoin*.a" | xargs rm -f
-	find src/test/ -name "*.pyc" | xargs rm -f
-	dh_auto_clean -Bwallet
+	rm -rf wallet
+	rm -rf nowallet
 
 override_dh_installchangelogs:
 	dh_installchangelogs -k doc/release-notes.md
