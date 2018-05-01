@@ -21,8 +21,7 @@ Build-Depends:
  libssl-dev,
  libzmq3-dev,
  pkg-config,
- python,
- python-configparser,
+ python3,
 Standards-Version: 4.0.0
 Homepage: http://github.com/bloq/bitcoin
 Vcs-Git: https://github.com/bloq/bitcoin
