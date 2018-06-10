@@ -23,10 +23,10 @@
 #include <memory> // for unique_ptr
 #include <unordered_map>
 
-static bool fRPCRunning = false;
-static bool fRPCInWarmup = true;
-static std::string rpcWarmupStatus("RPC server started");
 static CCriticalSection cs_rpcWarmup;
+static bool fRPCRunning = false;
+static bool fRPCInWarmup GUARDED_BY(cs_rpcWarmup) = true;
+static std::string rpcWarmupStatus GUARDED_BY(cs_rpcWarmup) = "RPC server started";
 /* Timer-creating functions */
 static RPCTimerInterface* timerInterface = nullptr;
 /* Map of name to timer. */
@@ -239,7 +239,7 @@ UniValue stop(const JSONRPCRequest& jsonRequest)
     return "Bitcoin server stopping";
 }
 
-UniValue uptime(const JSONRPCRequest& jsonRequest)
+static UniValue uptime(const JSONRPCRequest& jsonRequest)
 {
     if (jsonRequest.fHelp || jsonRequest.params.size() > 1)
         throw std::runtime_error(

@@ -66,7 +66,7 @@ bool SetupNetworking();
 template<typename... Args>
 bool error(const char* fmt, const Args&... args)
 {
-    LogPrintStr("ERROR: " + tfm::format(fmt, args...) + "\n");
+    LogPrintf("ERROR: %s\n", tfm::format(fmt, args...));
     return false;
 }
 
@@ -118,18 +118,46 @@ inline bool IsSwitchChar(char c)
 #endif
 }
 
+enum class OptionsCategory {
+    OPTIONS,
+    CONNECTION,
+    WALLET,
+    WALLET_DEBUG_TEST,
+    ZMQ,
+    DEBUG_TEST,
+    CHAINPARAMS,
+    NODE_RELAY,
+    BLOCK_CREATION,
+    RPC,
+    GUI,
+    COMMANDS,
+    REGISTER_COMMANDS,
+
+    HIDDEN // Always the last option to avoid printing these in the help
+};
+
 class ArgsManager
 {
 protected:
     friend class ArgsManagerHelper;
+
+    struct Arg
+    {
+        std::string m_help_param;
+        std::string m_help_text;
+        bool m_debug_only;
+
+        Arg(const std::string& help_param, const std::string& help_text, bool debug_only) : m_help_param(help_param), m_help_text(help_text), m_debug_only(debug_only) {};
+    };
 
     mutable CCriticalSection cs_args;
     std::map<std::string, std::vector<std::string>> m_override_args;
     std::map<std::string, std::vector<std::string>> m_config_args;
     std::string m_network;
     std::set<std::string> m_network_only_args;
+    std::map<OptionsCategory, std::map<std::string, Arg>> m_available_args;
 
-    void ReadConfigStream(std::istream& stream);
+    bool ReadConfigStream(std::istream& stream, std::string& error, bool ignore_invalid_keys = false);
 
 public:
     ArgsManager();
@@ -139,8 +167,8 @@ public:
      */
     void SelectConfigNetwork(const std::string& network);
 
-    void ParseParameters(int argc, const char*const argv[]);
-    void ReadConfigFile(const std::string& confPath);
+    bool ParseParameters(int argc, const char* const argv[], std::string& error);
+    bool ReadConfigFiles(std::string& error, bool ignore_invalid_keys = false);
 
     /**
      * Log warnings for options in m_section_only_args when
@@ -229,6 +257,26 @@ public:
      * @return CBaseChainParams::MAIN by default; raises runtime error if an invalid combination is given.
      */
     std::string GetChainName() const;
+
+    /**
+     * Add argument
+     */
+    void AddArg(const std::string& name, const std::string& help, const bool debug_only, const OptionsCategory& cat);
+
+    /**
+     * Clear available arguments
+     */
+    void ClearArgs() { m_available_args.clear(); }
+
+    /**
+     * Get the help string
+     */
+    std::string GetHelpMessage();
+
+    /**
+     * Check whether we know of this arg
+     */
+    bool IsArgKnown(const std::string& key, std::string& error);
 };
 
 extern ArgsManager gArgs;
@@ -305,7 +353,7 @@ std::unique_ptr<T> MakeUnique(Args&&... args)
  * CPU-intensive and non-interactive. See SCHED_BATCH in sched(7) for details.
  *
  * @return The return value of sched_setschedule(), or 1 on systems without
- * sched_setchedule().
+ * sched_setschedule().
  */
 int ScheduleBatchPriority(void);
 
